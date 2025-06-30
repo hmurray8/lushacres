@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initFormValidation();
     initScrollAnimations();
     initParallax();
+    initAcresGallery();
 });
 
 // Navigation functionality
@@ -402,6 +403,114 @@ document.addEventListener('visibilitychange', function() {
         console.log('Page visible');
     }
 });
+
+// Acres Gallery functionality
+function initAcresGallery() {
+    const acreMarkers = document.querySelectorAll('.acre-marker');
+    const acreDisplay = document.getElementById('acreDisplay');
+    
+    // Acre data
+    const acreData = {
+        1: {
+            title: 'Acre 1 - Hilltop Paradise',
+            description: 'Premium position at the very top of the hill with breathtaking panoramic views',
+            features: ['Panoramic Views', '1.2 Acres', 'North Facing', 'Best Views'],
+            image: 'acres1.JPG'
+        },
+        2: {
+            title: 'Acre 2 - Upper Slope',
+            description: 'Elevated position with excellent views and gentle slope perfect for building',
+            features: ['Elevated Views', '1.1 Acres', 'East Facing', 'Gentle Slope'],
+            image: 'acres2.JPG'
+        },
+        3: {
+            title: 'Acre 3 - Mid-Hill Haven',
+            description: 'Central location on the hillside with balanced views and accessibility',
+            features: ['Valley Views', '1.15 Acres', 'Protected Position', 'Easy Access'],
+            image: 'acres3.JPG'
+        },
+        4: {
+            title: 'Acre 4 - Central Grounds',
+            description: 'Perfect middle ground position with great potential for landscaping',
+            features: ['Central Location', '1.3 Acres', 'Level Building Site', 'Mature Trees'],
+            image: 'acres4.JPG'
+        },
+        5: {
+            title: 'Acre 5 - Lower Gardens',
+            description: 'Spacious lower position ideal for gardens and outdoor living',
+            features: ['Garden Paradise', '1.25 Acres', 'Rich Soil', 'Water Access'],
+            image: 'acres5.jpg'
+        },
+        6: {
+            title: 'Acre 6 - Valley View',
+            description: 'Lower hillside position with charming valley views and easy access',
+            features: ['Valley Views', '1.2 Acres', 'Level Access', 'Close to Road'],
+            image: 'acres6.JPG'
+        },
+        7: {
+            title: 'Acre 7 - Bottom Meadow',
+            description: 'Peaceful bottom position with level ground and meadow-like setting',
+            features: ['Level Ground', '1.35 Acres', 'Meadow Setting', 'Easy Development'],
+            image: 'acres7.JPG'
+        }
+    };
+    
+    // Handle acre marker clicks
+    acreMarkers.forEach(marker => {
+        marker.addEventListener('click', function() {
+            const acreNumber = parseInt(this.dataset.acre);
+            
+            // Remove active class from all markers
+            acreMarkers.forEach(m => m.classList.remove('active'));
+            
+            // Add active class to clicked marker
+            this.classList.add('active');
+            
+            // Update display
+            displayAcre(acreNumber);
+        });
+        
+        // Hover effects are handled by CSS now
+    });
+    
+    function displayAcre(acreNumber) {
+        const acre = acreData[acreNumber];
+        
+        // Clear current display
+        acreDisplay.innerHTML = '';
+        
+        // Create and load image
+        const img = document.createElement('img');
+        img.src = acre.image;
+        img.alt = acre.title;
+        img.style.opacity = '0';
+        
+        // Add loading state
+        acreDisplay.innerHTML = '<div class="loading-spinner">Loading...</div>';
+        
+        img.onload = function() {
+            acreDisplay.innerHTML = '';
+            acreDisplay.appendChild(img);
+            
+            // Animate image in
+            setTimeout(() => {
+                img.style.transition = 'opacity 0.5s ease';
+                img.style.opacity = '1';
+            }, 100);
+        };
+        
+        img.onerror = function() {
+            acreDisplay.innerHTML = '<div class="error-message">Image could not be loaded</div>';
+        };
+    }
+    
+    // Auto-select first acre on load
+    if (acreMarkers.length > 0) {
+        setTimeout(() => {
+            acreMarkers[0].click();
+        }, 500);
+    }
+}
 
 // Initialize everything when DOM is ready
 if (document.readyState === 'loading') {
