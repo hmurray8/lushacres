@@ -526,34 +526,19 @@ function initAcresGallery() {
 // Google Maps initialization
 function initMap() {
     // Replace these coordinates with your actual property location
-    const propertyLocation = { lat: -23.11297, lng: 150.71303 }; // Example: Melbourne coordinates
+    const propertyLocation = { lat: -23.11346, lng: 150.71287 }; // Example: Melbourne coordinates
     
-    // Create map
+    // Create map with satellite view
     const map = new google.maps.Map(document.getElementById('map'), {
         center: propertyLocation,
-        zoom: 15,
-        styles: [
-            {
-                "featureType": "all",
-                "elementType": "geometry.fill",
-                "stylers": [{"weight": "2.00"}]
-            },
-            {
-                "featureType": "all",
-                "elementType": "geometry.stroke",
-                "stylers": [{"color": "#9c9c9c"}]
-            },
-            {
-                "featureType": "landscape",
-                "elementType": "geometry",
-                "stylers": [{"color": "#f5f5f5"}]
-            },
-            {
-                "featureType": "water",
-                "elementType": "all",
-                "stylers": [{"color": "#b4d4e1"}]
-            }
-        ]
+        zoom: 16,
+        mapTypeId: 'satellite',
+        tilt: 0,
+        mapTypeControl: true,
+        mapTypeControlOptions: {
+            position: google.maps.ControlPosition.TOP_RIGHT,
+            mapTypeIds: ['satellite', 'hybrid', 'terrain']
+        }
     });
     
     // Add marker
