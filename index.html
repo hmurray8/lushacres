@@ -289,13 +289,7 @@
                     </ul>
                 </div>
                 <div class="map-container animate-on-scroll">
-                    <div class="map-placeholder">
-                        <svg width="100" height="100" viewBox="0 0 100 100" fill="none" opacity="0.2">
-                            <path d="M50 20C38.954 20 30 28.954 30 40C30 53.5 50 80 50 80C50 80 70 53.5 70 40C70 28.954 61.046 20 50 20Z" stroke="currentColor" stroke-width="2"/>
-                            <circle cx="50" cy="40" r="10" stroke="currentColor" stroke-width="2"/>
-                        </svg>
-                        <p>Interactive map coming soon</p>
-                    </div>
+                    <div id="map" class="google-map"></div>
                 </div>
             </div>
         </div>
@@ -411,5 +405,7 @@
 
     <!-- Scripts -->
     <script src="script.js"></script>
+    <!-- Google Maps API -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9YLfOJVKc265qIm9HZErwCKS1FPmvpyk&callback=initMap"></script>
 </body>
 </html>

@@ -409,6 +409,11 @@ function initAcresGallery() {
     const acreMarkers = document.querySelectorAll('.acre-marker');
     const acreDisplay = document.getElementById('acreDisplay');
     
+    if (!acreDisplay) {
+        console.log('Acre display not found');
+        return;
+    }
+    
     // Acre data
     const acreData = {
         1: {
@@ -506,11 +511,78 @@ function initAcresGallery() {
     
     // Auto-select first acre on load
     if (acreMarkers.length > 0) {
-        setTimeout(() => {
-            acreMarkers[0].click();
-        }, 500);
+        // Use requestAnimationFrame to ensure DOM is ready
+        window.requestAnimationFrame(() => {
+            setTimeout(() => {
+                // Directly call displayAcre instead of simulating click
+                displayAcre(1);
+                // Also mark the first marker as active
+                acreMarkers[0].classList.add('active');
+            }, 100);
+        });
     }
 }
+
+// Google Maps initialization
+function initMap() {
+    // Replace these coordinates with your actual property location
+    const propertyLocation = { lat: -23.11297, lng: 150.71303 }; // Example: Melbourne coordinates
+    
+    // Create map
+    const map = new google.maps.Map(document.getElementById('map'), {
+        center: propertyLocation,
+        zoom: 15,
+        styles: [
+            {
+                "featureType": "all",
+                "elementType": "geometry.fill",
+                "stylers": [{"weight": "2.00"}]
+            },
+            {
+                "featureType": "all",
+                "elementType": "geometry.stroke",
+                "stylers": [{"color": "#9c9c9c"}]
+            },
+            {
+                "featureType": "landscape",
+                "elementType": "geometry",
+                "stylers": [{"color": "#f5f5f5"}]
+            },
+            {
+                "featureType": "water",
+                "elementType": "all",
+                "stylers": [{"color": "#b4d4e1"}]
+            }
+        ]
+    });
+    
+    // Add marker
+    const marker = new google.maps.Marker({
+        position: propertyLocation,
+        map: map,
+        title: 'Lush Acres',
+        animation: google.maps.Animation.DROP
+    });
+    
+    // Add info window
+    const infoWindow = new google.maps.InfoWindow({
+        content: `
+            <div style="padding: 10px;">
+                <h3 style="margin: 0 0 5px 0; color: #2d6e3e;">Lush Acres</h3>
+                <p style="margin: 0; color: #666;">Premium rural land blocks</p>
+                <p style="margin: 5px 0 0 0; color: #666;">5 minutes from town center</p>
+            </div>
+        `
+    });
+    
+    // Show info window on click
+    marker.addListener('click', () => {
+        infoWindow.open(map, marker);
+    });
+}
+
+// Make initMap globally accessible for Google Maps callback
+window.initMap = initMap;
 
 // Initialize everything when DOM is ready
 if (document.readyState === 'loading') {
