@@ -420,25 +420,25 @@ function initAcresGallery() {
             title: 'Acre 1 - Hilltop Paradise',
             description: 'Premium position at the very top of the hill with breathtaking panoramic views',
             features: ['Panoramic Views', '1.2 Acres', 'North Facing', 'Best Views'],
-            image: 'acres1.JPG'
+            image: 'acres1.jpg'
         },
         2: {
             title: 'Acre 2 - Upper Slope',
             description: 'Elevated position with excellent views and gentle slope perfect for building',
             features: ['Elevated Views', '1.1 Acres', 'East Facing', 'Gentle Slope'],
-            image: 'acres2.JPG'
+            image: 'acres2.jpg'
         },
         3: {
             title: 'Acre 3 - Mid-Hill Haven',
             description: 'Central location on the hillside with balanced views and accessibility',
             features: ['Valley Views', '1.15 Acres', 'Protected Position', 'Easy Access'],
-            image: 'acres3.JPG'
+            image: 'acres3.jpg'
         },
         4: {
             title: 'Acre 4 - Central Grounds',
             description: 'Perfect middle ground position with great potential for landscaping',
             features: ['Central Location', '1.3 Acres', 'Level Building Site', 'Mature Trees'],
-            image: 'acres4.JPG'
+            image: 'acres4.jpg'
         },
         5: {
             title: 'Acre 5 - Lower Gardens',
@@ -450,13 +450,13 @@ function initAcresGallery() {
             title: 'Acre 6 - Valley View',
             description: 'Lower hillside position with charming valley views and easy access',
             features: ['Valley Views', '1.2 Acres', 'Level Access', 'Close to Road'],
-            image: 'acres6.JPG'
+            image: 'acres6.jpg'
         },
         7: {
             title: 'Acre 7 - Bottom Meadow',
             description: 'Peaceful bottom position with level ground and meadow-like setting',
             features: ['Level Ground', '1.35 Acres', 'Meadow Setting', 'Easy Development'],
-            image: 'acres7.JPG'
+            image: 'acres7.jpg'
         }
     };
     
