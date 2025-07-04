@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://lushacres.com.au/sitemap.xml
+
+# Disallow unnecessary files
+Disallow: /scripts/
+Disallow: /*.log$
+Disallow: /temp/
