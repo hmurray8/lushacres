@@ -127,41 +127,33 @@
             </div>
             <div class="acres-container">
                 <div class="hillside-navigation animate-on-scroll">
-                    <div class="hill-visual">
-                        <svg class="hill-svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
-                            <defs>
-                                <linearGradient id="hillGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                                    <stop offset="0%" style="stop-color:#4a7c59;stop-opacity:0.9" />
-                                    <stop offset="100%" style="stop-color:#2d5a3d;stop-opacity:0.9" />
-                                </linearGradient>
-                            </defs>
-                            <path d="M0,80 Q50,90 100,110 T200,160 Q250,180 300,190 T400,195 L400,300 L0,300 Z" fill="url(#hillGradient)" class="hill-path"/>
-                            <g class="acre-markers">
-                                <g class="acre-marker" data-acre="1" transform="translate(50, 80)">
-                                    <circle r="10" fill="#fff" stroke="#2d5a3d" stroke-width="2" class="marker-circle"/>
-                                </g>
-                                <g class="acre-marker" data-acre="2" transform="translate(100, 97)">
-                                    <circle r="10" fill="#fff" stroke="#2d5a3d" stroke-width="2" class="marker-circle"/>
-                                </g>
-                                <g class="acre-marker" data-acre="3" transform="translate(150, 119)">
-                                    <circle r="10" fill="#fff" stroke="#2d5a3d" stroke-width="2" class="marker-circle"/>
-                                </g>
-                                <g class="acre-marker" data-acre="4" transform="translate(200, 146)">
-                                    <circle r="10" fill="#fff" stroke="#2d5a3d" stroke-width="2" class="marker-circle"/>
-                                </g>
-                                <g class="acre-marker" data-acre="5" transform="translate(250, 165)">
-                                    <circle r="10" fill="#fff" stroke="#2d5a3d" stroke-width="2" class="marker-circle"/>
-                                </g>
-                                <g class="acre-marker" data-acre="6" transform="translate(300, 178)">
-                                    <circle r="10" fill="#fff" stroke="#2d5a3d" stroke-width="2" class="marker-circle"/>
-                                </g>
-                                <g class="acre-marker" data-acre="7" transform="translate(350, 184)">
-                                    <circle r="10" fill="#fff" stroke="#2d5a3d" stroke-width="2" class="marker-circle"/>
-                                </g>
-                            </g>
-                        </svg>
+                    <div class="lot-map-container">
+                        <img src="lot_outlines.jpg" alt="Lush Acres lot map" class="lot-map-image">
+                        <div class="acre-markers-overlay">
+                            <button class="acre-marker" data-acre="1" style="top: 85%; left: 52%;">
+                                <span class="marker-dot"></span>
+                            </button>
+                            <button class="acre-marker" data-acre="2" style="top: 70%; left: 38%;">
+                                <span class="marker-dot"></span>
+                            </button>
+                            <button class="acre-marker" data-acre="3" style="top: 55%; left: 38%;">
+                                <span class="marker-dot"></span>
+                            </button>
+                            <button class="acre-marker" data-acre="4" style="top: 42%; left: 38%;">
+                                <span class="marker-dot"></span>
+                            </button>
+                            <button class="acre-marker" data-acre="5" style="top: 30%; left: 38%;">
+                                <span class="marker-dot"></span>
+                            </button>
+                            <button class="acre-marker" data-acre="6" style="top: 18%; left: 38%;">
+                                <span class="marker-dot"></span>
+                            </button>
+                            <button class="acre-marker" data-acre="7" style="top: 8%; left: 45%;">
+                                <span class="marker-dot"></span>
+                            </button>
+                        </div>
                         <div class="hill-instructions">
-                            <p>Click on any dot to explore each acre</p>
+                            <p>Click on any lot to explore</p>
                         </div>
                     </div>
                 </div>

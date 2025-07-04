@@ -727,49 +727,59 @@ h1, h2, h3, h4, h5, h6 {
     position: relative;
 }
 
-.hill-visual {
+.lot-map-container {
     position: relative;
-    max-width: 500px;
+    max-width: 600px;
     margin: 0 auto;
 }
 
-.hill-svg {
+.lot-map-image {
     width: 100%;
     height: auto;
-    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.1));
+    display: block;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.acre-markers-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
 }
 
 .acre-marker {
+    position: absolute;
+    background: none;
+    border: none;
     cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    transform: translate(-50%, -50%);
 }
 
-.acre-marker .marker-circle {
+.marker-dot {
+    display: block;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border: 3px solid var(--primary-green);
+    border-radius: 50%;
     transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.acre-marker:hover .marker-circle {
-    fill: #f0f7f0;
-    stroke-width: 3;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+.acre-marker:hover .marker-dot {
+    transform: scale(1.3);
+    background: #f0f7f0;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.acre-marker.active .marker-circle {
-    fill: var(--primary-green);
-    stroke: var(--primary-green);
-}
-
-.acre-marker.active text {
-    fill: var(--white);
-}
-
-.marker-circle {
-    transition: all 0.3s ease;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
-}
-
-.acre-label {
-    opacity: 0.8;
-    font-weight: 500;
+.acre-marker.active .marker-dot {
+    background: var(--primary-green);
+    transform: scale(1.4);
 }
 
 .hill-instructions {
@@ -1046,13 +1056,14 @@ h1, h2, h3, h4, h5, h6 {
         gap: 2rem;
     }
     
-    .hill-visual {
+    .lot-map-container {
         max-width: 100%;
-        overflow-x: auto;
     }
     
-    .hill-svg {
-        min-width: 400px;
+    .marker-dot {
+        width: 16px;
+        height: 16px;
+        border-width: 2px;
     }
 
     .mobile-menu-toggle.active span:nth-child(1) {
