@@ -110,7 +110,7 @@ function initFormValidation() {
         },
         email: {
             required: true,
-            pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+            pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
             message: 'Please enter a valid email address'
         },
         phone: {
@@ -165,9 +165,7 @@ function initFormValidation() {
     // Remove error on input
     [nameInput, emailInput, phoneInput].forEach(input => {
         input.addEventListener('input', function() {
-            const formGroup = this.closest('.form-group');
-            if (formGroup.classList.contains('has-error')) {
-                formGroup.classList.remove('has-error');
+            if (this.classList.contains('error')) {
                 this.classList.remove('error');
             }
         });
@@ -186,6 +184,8 @@ function initFormValidation() {
         const phoneValid = validateField(phoneInput, validators.phone);
         
         const isFormValid = nameValid && emailValid && phoneValid;
+        
+        console.log('Form validation:', { nameValid, emailValid, phoneValid, isFormValid });
         
         if (isFormValid) {
             // Hide error message and submit
@@ -215,6 +215,12 @@ function initFormValidation() {
             // Collect form data
             const formData = new FormData(form);
             
+            // Log form data for debugging
+            console.log('Form data being submitted:');
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+            
             // Submit to Formspree
             const response = await fetch(form.action, {
                 method: 'POST',
@@ -223,6 +229,8 @@ function initFormValidation() {
                     'Accept': 'application/json'
                 }
             });
+            
+            console.log('Response status:', response.status);
             
             if (response.ok) {
                 // Hide form, show success message
@@ -246,14 +254,24 @@ function initFormValidation() {
                     });
                 }
             } else {
-                throw new Error('Form submission failed');
+                const errorText = await response.text();
+                console.error('Formspree error response:', errorText);
+                throw new Error(`Form submission failed: ${response.status} - ${errorText}`);
             }
             
         } catch (error) {
             console.error('Form submission error:', error);
-            submitButton.innerHTML = 'Try Again';
+            console.error('Error details:', error.message);
+            console.error('Response status:', error.status);
+            submitButton.innerHTML = originalText;
             submitButton.disabled = false;
-            alert('Sorry, there was an error submitting the form. Please try again.');
+            
+            // More specific error message
+            if (error.message.includes('Failed to fetch')) {
+                alert('Network error: Please check your internet connection and try again.');
+            } else {
+                alert('Sorry, there was an error submitting the form. Please try again. Check console for details.');
+            }
         }
     }
 }
