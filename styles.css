@@ -1359,12 +1359,12 @@ h1, h2, h3, h4, h5, h6 {
     }
 
     .form-footer {
-        align-items: stretch;
+        align-items: center;
     }
     
     .form-footer .btn {
-        width: 100%;
-        align-self: auto;
+        width: auto;
+        align-self: center;
     }
     
     .form-error-message {
