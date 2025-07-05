@@ -105,7 +105,6 @@ function initFormValidation() {
     const validators = {
         name: {
             required: true,
-            minLength: 2,
             pattern: /^[a-zA-Z\s]+$/,
             message: 'Please enter a valid name (letters and spaces only)'
         },
@@ -115,7 +114,7 @@ function initFormValidation() {
             message: 'Please enter a valid email address'
         },
         phone: {
-            required: false,
+            required: true,
             pattern: /^[\+]?[0-9\s\-\(\)]+$/,
             message: 'Please enter a valid phone number'
         }
@@ -151,16 +150,10 @@ function initFormValidation() {
     }
 
     function updateFieldValidation(formGroup, field, isValid, message) {
-        const errorMessage = formGroup.querySelector('.error-message');
-        
         if (isValid) {
-            formGroup.classList.remove('has-error');
             field.classList.remove('error');
-            if (errorMessage) errorMessage.textContent = '';
         } else {
-            formGroup.classList.add('has-error');
             field.classList.add('error');
-            if (errorMessage) errorMessage.textContent = message;
         }
     }
 
@@ -184,18 +177,26 @@ function initFormValidation() {
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
+        // Get error message element
+        const errorMessage = document.querySelector('.form-error-message');
+        
         // Validate all fields
         const nameValid = validateField(nameInput, validators.name);
         const emailValid = validateField(emailInput, validators.email);
-        const phoneValid = phoneInput.value.trim() ? validateField(phoneInput, validators.phone) : true;
+        const phoneValid = validateField(phoneInput, validators.phone);
         
         const isFormValid = nameValid && emailValid && phoneValid;
         
         if (isFormValid) {
+            // Hide error message and submit
+            errorMessage.style.display = 'none';
             submitForm();
         } else {
+            // Show error message
+            errorMessage.style.display = 'block';
+            
             // Scroll to first error
-            const firstError = form.querySelector('.has-error');
+            const firstError = form.querySelector('.error');
             if (firstError) {
                 firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }

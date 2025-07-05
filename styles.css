@@ -646,20 +646,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .error-message {
-    display: block;
-    margin-top: 0.25rem;
-    font-size: 0.875rem;
-    color: #ffecec;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    height: 0;
-    overflow: hidden;
+    display: none;
 }
 
-.form-group.has-error .error-message {
-    opacity: 1;
-    height: auto;
-    margin-bottom: 0.5rem;
+.form-error-message {
+    color: #ff6b6b;
+    font-size: 0.875rem;
+    text-align: center;
+    margin: 0.5rem 0;
 }
 
 .form-footer {

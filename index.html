@@ -322,22 +322,19 @@
                 <p class="section-subtitle animate-on-scroll">Be first to receive updates on Lush Acres</p>
             </div>
             <div class="contact-content">
-                <form class="contact-form animate-on-scroll" id="waitlistForm" action="https://formspree.io/f/mblyyvze" method="POST">
+                <form class="contact-form animate-on-scroll" id="waitlistForm" action="https://formspree.io/f/mblyyvze" method="POST" novalidate>
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="name">Full Name *</label>
-                            <input type="text" id="name" name="name" required>
-                            <span class="error-message">Please enter your name</span>
+                            <input type="text" id="name" name="name">
                         </div>
                         <div class="form-group">
                             <label for="email">Email Address *</label>
-                            <input type="email" id="email" name="email" required>
-                            <span class="error-message">Please enter a valid email</span>
+                            <input type="text" id="email" name="email">
                         </div>
                         <div class="form-group">
                             <label for="phone">Phone Number *</label>
-                            <input type="tel" id="phone" name="phone" required>
-                            <span class="error-message">Please enter a valid phone number</span>
+                            <input type="text" id="phone" name="phone">
                         </div>
                         <div class="form-group full-width">
                             <label for="message">Message</label>
@@ -349,6 +346,9 @@
                             <input type="checkbox" name="notify" checked>
                             <span>I want to be notified about land availability and updates</span>
                         </label>
+                        <div class="form-error-message" style="display: none;">
+                            Please fill in all required fields correctly
+                        </div>
                         <button type="submit" class="btn btn-primary btn-large">
                             Join the Waitlist
                             <svg class="btn-arrow" width="20" height="20" viewBox="0 0 20 20" fill="none">
