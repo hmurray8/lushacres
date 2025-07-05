@@ -1363,8 +1363,10 @@ h1, h2, h3, h4, h5, h6 {
     }
     
     .form-footer .btn {
-        width: auto;
+        width: auto !important;
+        max-width: fit-content;
         align-self: center;
+        flex-shrink: 0;
     }
     
     .form-error-message {
