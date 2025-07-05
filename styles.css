@@ -1327,9 +1327,27 @@ h1, h2, h3, h4, h5, h6 {
     .section-title {
         font-size: 2rem;
     }
+    
+    .contact {
+        padding: 3rem 0;
+    }
+    
+    .contact-form {
+        padding: 1.5rem;
+    }
 
     .form-grid {
         grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .form-group {
+        margin-bottom: 1rem;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        font-size: 16px; /* Prevents zoom on iOS */
     }
 
     .logo-img {
@@ -1340,9 +1358,19 @@ h1, h2, h3, h4, h5, h6 {
         padding: 0.4rem 0;
     }
 
+    .form-footer {
+        align-items: stretch;
+    }
+    
     .form-footer .btn {
         width: 100%;
-        min-width: auto;
+        align-self: auto;
+    }
+    
+    .form-error-message {
+        width: 100%;
+        align-self: auto;
+        margin: 0.5rem 0;
     }
     
     /* Acres Gallery on small screens */
