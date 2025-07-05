@@ -322,7 +322,13 @@
                 <p class="section-subtitle animate-on-scroll">Be first to receive updates on Lush Acres</p>
             </div>
             <div class="contact-content">
-                <form class="contact-form animate-on-scroll" id="waitlistForm" action="https://formspree.io/f/mblyyvze" method="POST" novalidate>
+                <form class="contact-form animate-on-scroll" id="waitlistForm" action="https://formsubmit.co/ajax/admin@lushacres.com.au" method="POST" novalidate>
+                    <!-- FormSubmit.co Configuration -->
+                    <input type="hidden" name="_subject" value="New Lush Acres Waitlist Submission">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_template" value="table">
+                    <input type="hidden" name="_autoresponse" value="Thank you for joining the Lush Acres waitlist! We'll be in touch soon.">
+                    
                     <div class="form-grid">
                         <div class="form-group">
                             <label for="name">Full Name *</label>

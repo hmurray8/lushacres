@@ -221,7 +221,7 @@ function initFormValidation() {
                 console.log(`${key}: ${value}`);
             }
             
-            // Submit to Formspree
+            // Submit to FormSubmit.co
             const response = await fetch(form.action, {
                 method: 'POST',
                 body: formData,
@@ -233,6 +233,9 @@ function initFormValidation() {
             console.log('Response status:', response.status);
             
             if (response.ok) {
+                const result = await response.json();
+                console.log('FormSubmit.co response:', result);
+                
                 // Hide form, show success message
                 form.style.display = 'none';
                 formSuccess.style.display = 'block';
@@ -255,7 +258,7 @@ function initFormValidation() {
                 }
             } else {
                 const errorText = await response.text();
-                console.error('Formspree error response:', errorText);
+                console.error('FormSubmit.co error response:', errorText);
                 throw new Error(`Form submission failed: ${response.status} - ${errorText}`);
             }
             
