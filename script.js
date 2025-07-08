@@ -436,49 +436,79 @@ function initAcresGallery() {
         return;
     }
     
-    // Acre data
+    // Acre data with multiple images
     const acreData = {
         1: {
             title: 'Acre 1 - Hilltop Paradise',
             description: 'Premium position at the very top of the hill with breathtaking panoramic views',
             features: ['Panoramic Views', '1.2 Acres', 'North Facing', 'Best Views'],
-            image: 'acres1.jpg'
+            images: ['lot_1_1.jpg', 'lot_1_2.jpg']
         },
         2: {
             title: 'Acre 2 - Upper Slope',
             description: 'Elevated position with excellent views and gentle slope perfect for building',
             features: ['Elevated Views', '1.1 Acres', 'East Facing', 'Gentle Slope'],
-            image: 'acres2.jpg'
+            images: ['lot_2_1.jpg', 'lot_2_2.jpg']
         },
         3: {
             title: 'Acre 3 - Mid-Hill Haven',
             description: 'Central location on the hillside with balanced views and accessibility',
             features: ['Valley Views', '1.15 Acres', 'Protected Position', 'Easy Access'],
-            image: 'acres3.jpg'
+            images: ['lot_3_1.jpg', 'lot_3_2.jpg']
         },
         4: {
             title: 'Acre 4 - Central Grounds',
             description: 'Perfect middle ground position with great potential for landscaping',
             features: ['Central Location', '1.3 Acres', 'Level Building Site', 'Mature Trees'],
-            image: 'acres4.jpg'
+            images: ['lot_4_1.jpg', 'lot_4_2.jpg']
         },
         5: {
             title: 'Acre 5 - Lower Gardens',
             description: 'Spacious lower position ideal for gardens and outdoor living',
             features: ['Garden Paradise', '1.25 Acres', 'Rich Soil', 'Water Access'],
-            image: 'acres5.jpg'
+            images: ['lot_5_1.jpg', 'lot_5_2.jpg']
         },
         6: {
             title: 'Acre 6 - Valley View',
             description: 'Lower hillside position with charming valley views and easy access',
             features: ['Valley Views', '1.2 Acres', 'Level Access', 'Close to Road'],
-            image: 'acres6.jpg'
+            images: ['lot_6_1.jpg', 'lot_6_2.jpg']
         },
         7: {
             title: 'Acre 7 - Bottom Meadow',
             description: 'Peaceful bottom position with level ground and meadow-like setting',
             features: ['Level Ground', '1.35 Acres', 'Meadow Setting', 'Easy Development'],
-            image: 'acres7.jpg'
+            images: ['lot_7_1.jpg', 'lot_7_2.jpg']
+        },
+        8: {
+            title: 'Acre 8 - Eastern Terrace',
+            description: 'Generous eastern position with terraced landscape and morning sun',
+            features: ['Eastern Aspect', '1.4 Acres', 'Terraced Land', 'Morning Sun'],
+            images: ['lot_8_1.jpg', 'lot_8_2.jpg', 'lot_8_3.jpg']
+        },
+        9: {
+            title: 'Acre 9 - Southern Vista',
+            description: 'Southern position with expansive views and natural privacy',
+            features: ['Private Location', '1.3 Acres', 'Southern Views', 'Natural Buffer'],
+            images: ['lot_9_1.jpg', 'lot_9_2.jpg']
+        },
+        10: {
+            title: 'Acre 10 - Western Heights',
+            description: 'Western position capturing stunning sunset views',
+            features: ['Sunset Views', '1.25 Acres', 'Western Aspect', 'Elevated Site'],
+            images: ['lot_10_1.jpg', 'lot_10_2.jpg']
+        },
+        11: {
+            title: 'Acre 11 - Northern Outlook',
+            description: 'Northern facing lot with year-round sun and scenic outlook',
+            features: ['North Facing', '1.35 Acres', 'All Day Sun', 'Scenic Outlook'],
+            images: ['lot_11_1.jpg', 'lot_11_2.jpg']
+        },
+        12: {
+            title: 'Acre 12 - Corner Haven',
+            description: 'Corner position offering dual access and flexible building options',
+            features: ['Corner Block', '1.45 Acres', 'Dual Access', 'Flexible Layout'],
+            images: ['lot_12_1.jpg', 'lot_12_2.jpg']
         }
     };
     
@@ -500,15 +530,36 @@ function initAcresGallery() {
         // Hover effects are handled by CSS now
     });
     
+    // Track current image index for each acre
+    const currentImageIndex = {};
+    
     function displayAcre(acreNumber) {
         const acre = acreData[acreNumber];
+        
+        if (!acre) {
+            acreDisplay.innerHTML = '<div class="error-message">Lot information not available</div>';
+            return;
+        }
+        
+        // Initialize image index for this acre if not set
+        if (currentImageIndex[acreNumber] === undefined) {
+            currentImageIndex[acreNumber] = 0;
+        }
         
         // Clear current display
         acreDisplay.innerHTML = '';
         
+        // Create carousel container
+        const carouselContainer = document.createElement('div');
+        carouselContainer.className = 'acre-carousel';
+        
+        // Create image container
+        const imageContainer = document.createElement('div');
+        imageContainer.className = 'acre-image-container';
+        
         // Create and load image
         const img = document.createElement('img');
-        img.src = acre.image;
+        img.src = acre.images[currentImageIndex[acreNumber]];
         img.alt = acre.title;
         img.style.opacity = '0';
         
@@ -517,7 +568,43 @@ function initAcresGallery() {
         
         img.onload = function() {
             acreDisplay.innerHTML = '';
-            acreDisplay.appendChild(img);
+            imageContainer.appendChild(img);
+            carouselContainer.appendChild(imageContainer);
+            
+            // Add navigation controls if there are multiple images
+            if (acre.images.length > 1) {
+                // Previous button
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'carousel-btn carousel-prev';
+                prevBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>';
+                prevBtn.onclick = () => navigateImage(acreNumber, -1);
+                carouselContainer.appendChild(prevBtn);
+                
+                // Next button
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'carousel-btn carousel-next';
+                nextBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>';
+                nextBtn.onclick = () => navigateImage(acreNumber, 1);
+                carouselContainer.appendChild(nextBtn);
+                
+                // Image indicators
+                const indicators = document.createElement('div');
+                indicators.className = 'carousel-indicators';
+                
+                acre.images.forEach((_, index) => {
+                    const dot = document.createElement('button');
+                    dot.className = 'carousel-indicator';
+                    if (index === currentImageIndex[acreNumber]) {
+                        dot.classList.add('active');
+                    }
+                    dot.onclick = () => goToImage(acreNumber, index);
+                    indicators.appendChild(dot);
+                });
+                
+                carouselContainer.appendChild(indicators);
+            }
+            
+            acreDisplay.appendChild(carouselContainer);
             
             // Animate image in
             setTimeout(() => {
@@ -529,6 +616,27 @@ function initAcresGallery() {
         img.onerror = function() {
             acreDisplay.innerHTML = '<div class="error-message">Image could not be loaded</div>';
         };
+    }
+    
+    function navigateImage(acreNumber, direction) {
+        const acre = acreData[acreNumber];
+        const currentIndex = currentImageIndex[acreNumber];
+        let newIndex = currentIndex + direction;
+        
+        // Wrap around if necessary
+        if (newIndex < 0) {
+            newIndex = acre.images.length - 1;
+        } else if (newIndex >= acre.images.length) {
+            newIndex = 0;
+        }
+        
+        currentImageIndex[acreNumber] = newIndex;
+        displayAcre(acreNumber);
+    }
+    
+    function goToImage(acreNumber, index) {
+        currentImageIndex[acreNumber] = index;
+        displayAcre(acreNumber);
     }
     
     // Auto-select first acre on load
