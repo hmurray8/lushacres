@@ -448,7 +448,7 @@ function initAcresGallery() {
             title: 'Acre 2 - Upper Slope',
             description: 'Elevated position with excellent views and gentle slope perfect for building',
             features: ['Elevated Views', '1.1 Acres', 'East Facing', 'Gentle Slope'],
-            images: ['lot_2_1.jpg', 'lot_2_2.jpg']
+            images: ['lot_2_1.jpg']//, 'lot_2_2.jpg']
         },
         3: {
             title: 'Acre 3 - Mid-Hill Haven',
