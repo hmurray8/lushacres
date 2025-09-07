@@ -852,7 +852,6 @@ h1, h2, h3, h4, h5, h6 {
 
 .acre-display:hover {
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-    transform: translateY(-5px);
     border-color: rgba(76, 175, 80, 0.2);
 }
 
