@@ -46,6 +46,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    
     <!-- CSS -->
     <link rel="stylesheet" href="styles.css">
     
@@ -216,7 +219,81 @@
     </section>
 
     <!-- Acres Gallery Section -->
-    <section class="acres-gallery section" id="acres">
+     <section class="acres-gallery section" id="acres">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title animate-on-scroll">Explore Lush Acres on Offer</h2>
+                <div class="section-line"></div>
+                <p class="section-subtitle animate-on-scroll">Navigate available allotments</p>
+            </div>
+            <div class="acres-container">
+                <div class="hillside-navigation animate-on-scroll">
+                    <div class="lot-map-container">
+                        <img src="plan.jpg" alt="Lush Acres site map showing 7 premium acre allotments in Yeppoon with lot boundaries" class="lot-map-image">
+                        <div class="acre-markers-overlay">
+                            <button class="acre-marker" data-acre="1" style="top: 82%; left: 43%;">
+                                <span class="marker-dot">1</span>
+                            </button>
+                            <button class="acre-marker" data-acre="2" style="top: 80.5%; left: 35%;">
+                                <span class="marker-dot">2</span>
+                            </button>
+                            <button class="acre-marker" data-acre="3" style="top: 75%; left: 39%;">
+                                <span class="marker-dot">3</span>
+                            </button>
+                            <button class="acre-marker" data-acre="4" style="top: 69%; left: 40%;">
+                                <span class="marker-dot">4</span>
+                            </button>
+                            <button class="acre-marker" data-acre="5" style="top: 63%; left: 41%;">
+                                <span class="marker-dot">5</span>
+                            </button>
+                            <button class="acre-marker" data-acre="6" style="top: 56%; left: 42%;">
+                                <span class="marker-dot">6</span>
+                            </button >
+                            <button class="acre-marker" data-acre="7" style="top: 47.5%; left: 41%;">
+                                <span class="marker-dot">7</span>
+                            </button >
+                            <button class="acre-marker" data-acre="8" style="top: 42.5%; left: 41%;">
+                                <span class="marker-dot">8</span>
+                            </button>
+                            <button class="acre-marker" data-acre="9" style="top: 37%; left: 42%;">
+                                <span class="marker-dot">9</span>
+                            </button>
+                            <button class="acre-marker" data-acre="10" style="top: 31.2%; left: 43%;">
+                                <span class="marker-dot">10</span>
+                            </button>
+                            <button class="acre-marker" data-acre="11" style="top: 25.8%; left: 44%;">
+                                <span class="marker-dot">11</span>
+                            </button>
+                            <button class="acre-marker" data-acre="12" style="top: 20.4%; left: 45%;">
+                                <span class="marker-dot">12</span>
+                            </button>
+                            <button class="acre-marker" data-acre="13" style="top: 15%; left: 46%;">
+                                <span class="marker-dot">13</span>
+                            </button>
+                        </div>
+                        <div class="hill-instructions">
+                            <p>Click on any lot to explore</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="acre-viewer animate-on-scroll">
+                    <div class="acre-display" id="acreDisplay">
+                        <div class="acre-placeholder">
+                            <svg width="100" height="100" viewBox="0 0 100 100" fill="none" opacity="0.3">
+                                <rect x="20" y="20" width="60" height="60" stroke="currentColor" stroke-width="2" stroke-dasharray="5 5"/>
+                                <path d="M30 70L50 50L60 60L70 50L80 60" stroke="currentColor" stroke-width="2"/>
+                                <circle cx="40" cy="35" r="5" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            <p>Select an acre from the hillside to view</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!--section class="acres-gallery section" id="acres">
         <div class="container">
             <div class="section-header">
                 <h2 class="section-title animate-on-scroll">Explore Lush Acres on Offer</h2>
@@ -243,12 +320,12 @@
                             <button class="acre-marker" data-acre="5" style="top: 37.5%; left: 48%;">
                                 <span class="marker-dot">5</span>
                             </button>
-                            <!--button class="acre-marker" data-acre="6" style="top: 31%; left: 50%;">
+                            <button class="acre-marker" data-acre="6" style="top: 31%; left: 50%;">
                                 <span class="marker-dot">6</span>
-                            </button -->
-                            <!--button class="acre-marker" data-acre="7" style="top: 22%; left: 61%;">
+                            </button >
+                            <button class="acre-marker" data-acre="7" style="top: 22%; left: 61%;">
                                 <span class="marker-dot">7</span>
-                            </button -->
+                            </button >
                             <button class="acre-marker" data-acre="8" style="top: 18.5%; left: 54%;">
                                 <span class="marker-dot">8</span>
                             </button>
@@ -263,6 +340,9 @@
                             </button>
                             <button class="acre-marker" data-acre="12" style="top: 5%; left: 54%;">
                                 <span class="marker-dot">12</span>
+                            </button>
+                            <button class="acre-marker" data-acre="13" style="top: 2%; left: 61%;">
+                                <span class="marker-dot">13</span>
                             </button>
                         </div>
                         <div class="hill-instructions">
@@ -284,7 +364,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section-->
 
     <!-- Location Section -->
     <section class="location section" id="location">
@@ -325,7 +405,7 @@
                     </ul>
                 </div>
                 <div class="map-container animate-on-scroll">
-                    <div id="map" class="google-map"></div>
+                    <div id="map" class="leaflet-map"></div>
                 </div>
             </div>
         </div>
@@ -443,9 +523,10 @@
     </footer>
 
 
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
     <!-- Scripts -->
     <script src="script.js"></script>
-    <!-- Google Maps API -->
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD9YLfOJVKc265qIm9HZErwCKS1FPmvpyk&callback=initMap"></script>
 </body>
 </html>

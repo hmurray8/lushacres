@@ -544,9 +544,10 @@ h1, h2, h3, h4, h5, h6 {
     box-shadow: var(--shadow-lg);
 }
 
-.google-map {
+.leaflet-map {
     width: 100%;
     height: 100%;
+    border-radius: 12px;
 }
 
 .map-placeholder {
@@ -723,10 +724,13 @@ h1, h2, h3, h4, h5, h6 {
 
 .acres-container {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    grid-template-columns: 12fr 20fr;
+    gap: 4rem;
     align-items: start;
     margin-top: 3rem;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .hillside-navigation {
@@ -738,10 +742,13 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
     max-width: 100%;
     margin: 0 auto;
-    aspect-ratio: 4/3;
+    aspect-ratio: 4/5;
     overflow: hidden;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    backdrop-filter: blur(10px);
 }
 
 .lot-map-image {
@@ -779,13 +786,13 @@ h1, h2, h3, h4, h5, h6 {
     justify-content: center;
     width: 20px;
     height: 20px;
-    background: #fff;
+    background: linear-gradient(135deg, #fff, #f8fffe);
     border: 2px solid var(--primary-green);
     border-radius: 50%;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
     font-size: 0.625rem;
-    font-weight: 600;
+    font-weight: 700;
     color: var(--primary-green);
     line-height: 1;
     text-align: center;
@@ -793,22 +800,32 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .acre-marker:hover .marker-dot {
-    transform: scale(1.2);
-    background: #f0f7f0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transform: scale(1.3);
+    background: linear-gradient(135deg, #f0f7f0, #e8f5e8);
+    box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+    border-width: 3px;
 }
 
 .acre-marker.active .marker-dot {
-    background: var(--primary-green);
-    transform: scale(1.3);
+    background: linear-gradient(135deg, var(--primary-green), var(--secondary-green));
+    transform: scale(1.4);
     color: var(--white);
+    box-shadow: 0 8px 24px rgba(76, 175, 80, 0.5);
+    border-color: var(--white);
+    border-width: 3px;
 }
 
 .hill-instructions {
     text-align: center;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
     color: var(--medium-gray);
     font-size: 0.875rem;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 0.75rem 1.5rem;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(76, 175, 80, 0.1);
+    font-weight: 500;
 }
 
 .acre-viewer {
@@ -816,12 +833,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .acre-display {
-    background: var(--white);
-    border-radius: 12px;
+    background: linear-gradient(135deg, var(--white), #f8fffe);
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
     position: relative;
     aspect-ratio: 4/3;
+    border: 1px solid rgba(76, 175, 80, 0.1);
+    transition: all 0.3s ease;
 }
 
 .acre-display img {
@@ -829,6 +848,12 @@ h1, h2, h3, h4, h5, h6 {
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
+}
+
+.acre-display:hover {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    transform: translateY(-5px);
+    border-color: rgba(76, 175, 80, 0.2);
 }
 
 .acre-display:hover img {
@@ -1214,7 +1239,7 @@ h1, h2, h3, h4, h5, h6 {
     }
     
     .lot-map-container {
-        aspect-ratio: 16/12;
+        aspect-ratio: 12/16;
     }
 }
 
@@ -1256,7 +1281,7 @@ h1, h2, h3, h4, h5, h6 {
     }
     
     .lot-map-container {
-        aspect-ratio: 3/2;
+        aspect-ratio: 2/3;
         margin-bottom: 1rem;
     }
     
@@ -1273,7 +1298,7 @@ h1, h2, h3, h4, h5, h6 {
     }
     
     .acre-display {
-        aspect-ratio: 16/12;
+        aspect-ratio: 4/3;
     }
 
     .mobile-menu-toggle.active span:nth-child(1) {

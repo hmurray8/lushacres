@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollAnimations();
     initParallax();
     initAcresGallery();
+    initMap();
 });
 
 // Navigation functionality
@@ -448,7 +449,7 @@ function initAcresGallery() {
             title: 'Acre 2 - Upper Slope',
             description: 'Elevated position with excellent views and gentle slope perfect for building',
             features: ['Elevated Views', '1.1 Acres', 'East Facing', 'Gentle Slope'],
-            images: ['lot_2_1.jpg']//, 'lot_2_2.jpg']
+            images: [/*'lot_2_1.jpg',*/ 'lot_2_2.jpg']
         },
         3: {
             title: 'Acre 3 - Mid-Hill Haven',
@@ -509,6 +510,12 @@ function initAcresGallery() {
             description: 'Corner position offering dual access and flexible building options',
             features: ['Corner Block', '1.45 Acres', 'Dual Access', 'Flexible Layout'],
             images: ['lot_12_1.jpg', 'lot_12_2.jpg']
+        },
+        13: {
+            title: 'Acre 13 - Corner Haven',
+            description: 'Corner position offering dual access and flexible building options',
+            features: ['Corner Block', '1.45 Acres', 'Dual Access', 'Flexible Layout'],
+            images: ['lot_13_1.jpg']//, 'lot_12_2.jpg']
         }
     };
     
@@ -653,51 +660,73 @@ function initAcresGallery() {
     }
 }
 
-// Google Maps initialization
+// Leaflet Map initialization
 function initMap() {
-    // Replace these coordinates with your actual property location
-    const propertyLocation = { lat: -23.11346, lng: 150.71287 }; // Example: Melbourne coordinates
+    // Property location coordinates
+    const propertyLocation = [-23.11346, 150.71287]; // Yeppoon coordinates
     
-    // Create map with satellite view
-    const map = new google.maps.Map(document.getElementById('map'), {
-        center: propertyLocation,
-        zoom: 16,
-        mapTypeId: 'satellite',
-        tilt: 0,
-        mapTypeControl: true,
-        mapTypeControlOptions: {
-            position: google.maps.ControlPosition.TOP_RIGHT,
-            mapTypeIds: ['satellite', 'hybrid', 'terrain']
-        }
+    // Create map
+    const map = L.map('map').setView(propertyLocation, 16);
+    
+    // Add satellite layer as default
+    const satellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+        maxZoom: 19
+    }).addTo(map);
+    
+    // Add street map as option
+    const streetMap = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 19
+    });
+    
+    // Layer control
+    const baseMaps = {
+        "Satellite": satellite,
+        "Street Map": streetMap
+    };
+    
+    L.control.layers(baseMaps).addTo(map);
+    
+    // Custom marker icon with Lush Acres branding
+    const customIcon = L.divIcon({
+        html: `<div style="
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            width: 30px;
+            height: 30px;
+            border-radius: 50% 50% 50% 0;
+            border: 3px solid white;
+            box-shadow: 0 3px 10px rgba(76, 175, 80, 0.4);
+            transform: rotate(-45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        "><div style="
+            transform: rotate(45deg);
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        ">🏡</div></div>`,
+        className: 'custom-marker',
+        iconSize: [30, 30],
+        iconAnchor: [15, 30]
     });
     
     // Add marker
-    const marker = new google.maps.Marker({
-        position: propertyLocation,
-        map: map,
-        title: 'Lush Acres',
-        animation: google.maps.Animation.DROP
-    });
+    const marker = L.marker(propertyLocation, { icon: customIcon }).addTo(map);
     
-    // Add info window
-    const infoWindow = new google.maps.InfoWindow({
-        content: `
-            <div style="padding: 10px;">
-                <h3 style="margin: 0 0 5px 0; color: #2d6e3e;">Lush Acres</h3>
-                <p style="margin: 0; color: #666;">Premium rural land blocks</p>
-                <p style="margin: 5px 0 0 0; color: #666;">5 minutes from town center</p>
+    // Add popup with styling consistent with site design
+    marker.bindPopup(`
+        <div style="padding: 15px; min-width: 220px; font-family: 'Inter', sans-serif;">
+            <h3 style="margin: 0 0 8px 0; color: #2d6e3e; font-family: 'Playfair Display', serif; font-size: 18px;">Lush Acres</h3>
+            <p style="margin: 0 0 5px 0; color: #666; font-size: 14px; line-height: 1.4;">Premium rural land blocks</p>
+            <p style="margin: 0; color: #666; font-size: 14px; line-height: 1.4;">5 minutes from Yeppoon town center</p>
+            <div style="margin-top: 10px; padding: 8px; background: linear-gradient(135deg, #f0f7f0, #e8f5e8); border-radius: 6px; font-size: 12px; color: #2d6e3e;">
+                📍 Vaughans Road, Adelaide Park
             </div>
-        `
-    });
-    
-    // Show info window on click
-    marker.addListener('click', () => {
-        infoWindow.open(map, marker);
-    });
+        </div>
+    `);
 }
-
-// Make initMap globally accessible for Google Maps callback
-window.initMap = initMap;
 
 // Initialize everything when DOM is ready
 if (document.readyState === 'loading') {
