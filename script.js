@@ -1,3 +1,6 @@
+// Shared reference to the photo zoom lightbox controller (set by initLightbox)
+let acreLightbox = null;
+
 // DOM Content Loaded Event
 document.addEventListener('DOMContentLoaded', function() {
     // Initialize all functionality
@@ -6,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initFormValidation();
     initScrollAnimations();
     initParallax();
+    initLightbox();
     initAcresGallery();
     initMap();
 });
@@ -427,6 +431,398 @@ document.addEventListener('visibilitychange', function() {
     }
 });
 
+// Photo Zoom Lightbox (supports wheel zoom, pinch-to-zoom, drag pan, double-click/tap zoom, swipe nav, keyboard)
+function initLightbox() {
+    const lightbox = document.getElementById('lightbox');
+    if (!lightbox) return;
+
+    const backdrop = document.getElementById('lightboxBackdrop');
+    const closeBtn = document.getElementById('lightboxClose');
+    const prevBtn = document.getElementById('lightboxPrev');
+    const nextBtn = document.getElementById('lightboxNext');
+    const stage = document.getElementById('lightboxStage');
+    const imgEl = document.getElementById('lightboxImage');
+    const zoomInBtn = document.getElementById('lightboxZoomIn');
+    const zoomOutBtn = document.getElementById('lightboxZoomOut');
+    const zoomResetBtn = document.getElementById('lightboxZoomReset');
+    const zoomLevelEl = document.getElementById('lightboxZoomLevel');
+    const counterEl = document.getElementById('lightboxCounter');
+    const hintEl = document.getElementById('lightboxHint');
+
+    const MIN_SCALE = 1;
+    const MAX_SCALE = 4;
+    const DOUBLE_TAP_SCALE = 2.5;
+    const SWIPE_THRESHOLD = 60;
+    const TAP_MOVE_THRESHOLD = 4;
+    const DOUBLE_TAP_WINDOW = 350;
+    const DOUBLE_TAP_RADIUS = 30;
+
+    let images = [];
+    let title = '';
+    let index = 0;
+    let onNavigate = null;
+    let onClose = null;
+    let triggerEl = null;
+
+    let scale = 1;
+    let translateX = 0;
+    let translateY = 0;
+
+    const pointers = new Map();
+    let isDragging = false;
+    let dragMoved = false;
+    let dragStart = { x: 0, y: 0 };
+    let dragStartTranslate = { x: 0, y: 0 };
+
+    let pinching = false;
+    let pinchStartDistance = 0;
+    let pinchStartScale = 1;
+    let pinchAnchor = { x: 0, y: 0 };
+
+    let lastTapTime = 0;
+    let lastTapPos = { x: 0, y: 0 };
+    let hintTimer = null;
+
+    function clamp(v, min, max) {
+        return Math.min(max, Math.max(min, v));
+    }
+
+    function distance(p1, p2) {
+        return Math.hypot(p1.x - p2.x, p1.y - p2.y);
+    }
+
+    function midpoint(p1, p2) {
+        return { x: (p1.x + p2.x) / 2, y: (p1.y + p2.y) / 2 };
+    }
+
+    function updateZoomLevel() {
+        zoomLevelEl.textContent = Math.round(scale * 100) + '%';
+        zoomOutBtn.disabled = scale <= MIN_SCALE + 0.001;
+        zoomInBtn.disabled = scale >= MAX_SCALE - 0.001;
+        stage.classList.toggle('zoomed', scale > MIN_SCALE + 0.001);
+    }
+
+    function clampTranslate() {
+        const rect = stage.getBoundingClientRect();
+        const fittedW = imgEl.clientWidth;
+        const fittedH = imgEl.clientHeight;
+        const scaledW = fittedW * scale;
+        const scaledH = fittedH * scale;
+        const maxX = Math.max(0, (scaledW - rect.width) / 2);
+        const maxY = Math.max(0, (scaledH - rect.height) / 2);
+        translateX = clamp(translateX, -maxX, maxX);
+        translateY = clamp(translateY, -maxY, maxY);
+    }
+
+    function applyTransform() {
+        imgEl.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+        updateZoomLevel();
+    }
+
+    function withSnap(fn) {
+        imgEl.classList.add('snap');
+        fn();
+        window.clearTimeout(imgEl._snapTimer);
+        imgEl._snapTimer = window.setTimeout(() => imgEl.classList.remove('snap'), 260);
+    }
+
+    function resetZoom(snap) {
+        const doReset = () => {
+            scale = 1;
+            translateX = 0;
+            translateY = 0;
+            applyTransform();
+        };
+        if (snap) withSnap(doReset); else doReset();
+    }
+
+    function zoomAt(clientX, clientY, targetScale) {
+        const rect = stage.getBoundingClientRect();
+        targetScale = clamp(targetScale, MIN_SCALE, MAX_SCALE);
+        const offsetX = clientX - rect.left - rect.width / 2;
+        const offsetY = clientY - rect.top - rect.height / 2;
+        const imgX = (offsetX - translateX) / scale;
+        const imgY = (offsetY - translateY) / scale;
+        scale = targetScale;
+        translateX = offsetX - imgX * scale;
+        translateY = offsetY - imgY * scale;
+        clampTranslate();
+        applyTransform();
+    }
+
+    function hideHint() {
+        if (hintEl) hintEl.classList.add('fade-out');
+    }
+
+    function showHintBriefly() {
+        if (!hintEl) return;
+        hintEl.classList.remove('fade-out');
+        window.clearTimeout(hintTimer);
+        hintTimer = window.setTimeout(hideHint, 3500);
+    }
+
+    function updateCounter() {
+        const multiple = images.length > 1;
+        counterEl.hidden = !multiple;
+        prevBtn.hidden = !multiple;
+        nextBtn.hidden = !multiple;
+        if (multiple) {
+            counterEl.textContent = `${index + 1} / ${images.length}`;
+        }
+    }
+
+    function loadImage(newIndex) {
+        index = ((newIndex % images.length) + images.length) % images.length;
+        resetZoom(false);
+        imgEl.style.opacity = '0';
+        imgEl.onload = () => {
+            imgEl.style.transition = 'opacity 0.3s ease';
+            imgEl.style.opacity = '1';
+        };
+        imgEl.src = images[index];
+        imgEl.alt = title ? `${title} - photo ${index + 1}` : `Photo ${index + 1}`;
+        updateCounter();
+        if (typeof onNavigate === 'function') onNavigate(index);
+    }
+
+    function navigate(direction) {
+        if (images.length <= 1) return;
+        loadImage(index + direction);
+    }
+
+    function getFocusable() {
+        return Array.from(lightbox.querySelectorAll('button')).filter(el => !el.hidden && !el.disabled);
+    }
+
+    function trapFocus(e) {
+        if (e.key !== 'Tab') return;
+        const focusable = getFocusable();
+        if (!focusable.length) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+        }
+    }
+
+    function onKeydown(e) {
+        switch (e.key) {
+            case 'Escape':
+                close();
+                break;
+            case 'ArrowLeft':
+                navigate(-1);
+                break;
+            case 'ArrowRight':
+                navigate(1);
+                break;
+            case '+':
+            case '=':
+                withSnap(() => zoomAt(window.innerWidth / 2, window.innerHeight / 2, scale + 0.75));
+                break;
+            case '-':
+            case '_':
+                withSnap(() => zoomAt(window.innerWidth / 2, window.innerHeight / 2, scale - 0.75));
+                break;
+            case '0':
+                resetZoom(true);
+                break;
+            default:
+                trapFocus(e);
+        }
+    }
+
+    function open(options) {
+        images = options.images || [];
+        if (!images.length) return;
+        title = options.title || '';
+        onNavigate = typeof options.onNavigate === 'function' ? options.onNavigate : null;
+        onClose = typeof options.onClose === 'function' ? options.onClose : null;
+        triggerEl = options.triggerEl || null;
+
+        lightbox.hidden = false;
+        document.body.classList.add('lightbox-open');
+        void lightbox.offsetWidth; // force reflow so the fade-in transition runs
+        lightbox.classList.add('active');
+
+        loadImage(options.index || 0);
+        showHintBriefly();
+
+        document.addEventListener('keydown', onKeydown);
+        closeBtn.focus();
+    }
+
+    function close() {
+        const finalIndex = index;
+        lightbox.classList.remove('active');
+        document.body.classList.remove('lightbox-open');
+        document.removeEventListener('keydown', onKeydown);
+        resetZoom(false);
+        window.setTimeout(() => {
+            lightbox.hidden = true;
+            imgEl.removeAttribute('src');
+        }, 250);
+        if (triggerEl && typeof triggerEl.focus === 'function') {
+            triggerEl.focus();
+        }
+        if (onClose) onClose(finalIndex);
+    }
+
+    closeBtn.addEventListener('click', close);
+    backdrop.addEventListener('click', close);
+    prevBtn.addEventListener('click', () => navigate(-1));
+    nextBtn.addEventListener('click', () => navigate(1));
+
+    zoomInBtn.addEventListener('click', () => {
+        const rect = stage.getBoundingClientRect();
+        withSnap(() => zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, scale + 0.75));
+    });
+    zoomOutBtn.addEventListener('click', () => {
+        const rect = stage.getBoundingClientRect();
+        withSnap(() => zoomAt(rect.left + rect.width / 2, rect.top + rect.height / 2, scale - 0.75));
+    });
+    zoomResetBtn.addEventListener('click', () => resetZoom(true));
+
+    stage.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const delta = -e.deltaY * 0.0018;
+        zoomAt(e.clientX, e.clientY, scale * (1 + delta));
+        hideHint();
+    }, { passive: false });
+
+    stage.addEventListener('dblclick', (e) => {
+        e.preventDefault();
+        hideHint();
+        if (scale > MIN_SCALE + 0.01) {
+            resetZoom(true);
+        } else {
+            withSnap(() => zoomAt(e.clientX, e.clientY, DOUBLE_TAP_SCALE));
+        }
+    });
+
+    stage.addEventListener('pointerdown', (e) => {
+        stage.setPointerCapture(e.pointerId);
+        pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        hideHint();
+
+        if (pointers.size === 2) {
+            const pts = Array.from(pointers.values());
+            pinching = true;
+            isDragging = false;
+            pinchStartDistance = distance(pts[0], pts[1]) || 1;
+            pinchStartScale = scale;
+            const rect = stage.getBoundingClientRect();
+            const mid = midpoint(pts[0], pts[1]);
+            const offsetX = mid.x - rect.left - rect.width / 2;
+            const offsetY = mid.y - rect.top - rect.height / 2;
+            pinchAnchor = {
+                x: (offsetX - translateX) / scale,
+                y: (offsetY - translateY) / scale
+            };
+        } else if (pointers.size === 1) {
+            isDragging = true;
+            dragMoved = false;
+            dragStart = { x: e.clientX, y: e.clientY };
+            dragStartTranslate = { x: translateX, y: translateY };
+            stage.classList.add('dragging');
+        }
+    });
+
+    stage.addEventListener('pointermove', (e) => {
+        if (!pointers.has(e.pointerId)) return;
+        pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+        if (pinching && pointers.size === 2) {
+            const pts = Array.from(pointers.values());
+            const newDistance = distance(pts[0], pts[1]) || 1;
+            const factor = newDistance / pinchStartDistance;
+            const rect = stage.getBoundingClientRect();
+            const mid = midpoint(pts[0], pts[1]);
+            const offsetX = mid.x - rect.left - rect.width / 2;
+            const offsetY = mid.y - rect.top - rect.height / 2;
+            scale = clamp(pinchStartScale * factor, MIN_SCALE, MAX_SCALE);
+            translateX = offsetX - pinchAnchor.x * scale;
+            translateY = offsetY - pinchAnchor.y * scale;
+            clampTranslate();
+            applyTransform();
+        } else if (isDragging && pointers.size === 1) {
+            const dx = e.clientX - dragStart.x;
+            const dy = e.clientY - dragStart.y;
+            if (Math.abs(dx) > TAP_MOVE_THRESHOLD || Math.abs(dy) > TAP_MOVE_THRESHOLD) {
+                dragMoved = true;
+            }
+            if (scale > MIN_SCALE + 0.01) {
+                translateX = dragStartTranslate.x + dx;
+                translateY = dragStartTranslate.y + dy;
+                clampTranslate();
+                applyTransform();
+            }
+        }
+    });
+
+    function endPointer(e) {
+        const wasSinglePointerTap = isDragging && !pinching && pointers.size === 1;
+        const dx = e.clientX - dragStart.x;
+        const dy = e.clientY - dragStart.y;
+        pointers.delete(e.pointerId);
+
+        if (pointers.size < 2) pinching = false;
+
+        if (pointers.size === 1) {
+            const remaining = Array.from(pointers.values())[0];
+            dragStart = { x: remaining.x, y: remaining.y };
+            dragStartTranslate = { x: translateX, y: translateY };
+            isDragging = true;
+            return;
+        }
+
+        if (pointers.size === 0) {
+            isDragging = false;
+            stage.classList.remove('dragging');
+
+            if (wasSinglePointerTap && !dragMoved && e.pointerType === 'touch') {
+                const now = Date.now();
+                const tapPos = { x: e.clientX, y: e.clientY };
+                if (now - lastTapTime < DOUBLE_TAP_WINDOW && distance(tapPos, lastTapPos) < DOUBLE_TAP_RADIUS) {
+                    if (scale > MIN_SCALE + 0.01) {
+                        resetZoom(true);
+                    } else {
+                        withSnap(() => zoomAt(tapPos.x, tapPos.y, DOUBLE_TAP_SCALE));
+                    }
+                    lastTapTime = 0;
+                } else {
+                    lastTapTime = now;
+                    lastTapPos = tapPos;
+                }
+            } else if (wasSinglePointerTap && dragMoved && scale <= MIN_SCALE + 0.01) {
+                if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.5) {
+                    navigate(dx < 0 ? 1 : -1);
+                }
+            }
+
+            if (scale <= MIN_SCALE + 0.01 && (translateX !== 0 || translateY !== 0)) {
+                resetZoom(true);
+            }
+            dragMoved = false;
+        }
+    }
+
+    stage.addEventListener('pointerup', endPointer);
+    stage.addEventListener('pointercancel', endPointer);
+
+    window.addEventListener('resize', () => {
+        if (!lightbox.classList.contains('active')) return;
+        clampTranslate();
+        applyTransform();
+    });
+
+    acreLightbox = { open, close };
+}
+
 // Acres Gallery functionality
 function initAcresGallery() {
     const acreMarkers = document.querySelectorAll('.acre-marker');
@@ -576,8 +972,47 @@ function initAcresGallery() {
         img.onload = function() {
             acreDisplay.innerHTML = '';
             imageContainer.appendChild(img);
+
+            // Zoom affordance + click-to-zoom
+            const zoomHint = document.createElement('div');
+            zoomHint.className = 'acre-zoom-hint';
+            zoomHint.setAttribute('aria-hidden', 'true');
+            zoomHint.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>';
+            imageContainer.appendChild(zoomHint);
+
+            img.setAttribute('role', 'button');
+            img.setAttribute('tabindex', '0');
+            img.setAttribute('aria-label', 'Click to zoom photo');
+
+            const openZoom = () => {
+                if (!acreLightbox) return;
+                const startIndex = currentImageIndex[acreNumber];
+                acreLightbox.open({
+                    images: acre.images,
+                    index: startIndex,
+                    title: acre.title,
+                    triggerEl: img,
+                    onNavigate: (newIndex) => {
+                        currentImageIndex[acreNumber] = newIndex;
+                    },
+                    onClose: (finalIndex) => {
+                        if (finalIndex !== startIndex) {
+                            displayAcre(acreNumber);
+                        }
+                    }
+                });
+            };
+
+            img.addEventListener('click', openZoom);
+            img.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    openZoom();
+                }
+            });
+
             carouselContainer.appendChild(imageContainer);
-            
+
             // Add navigation controls if there are multiple images
             if (acre.images.length > 1) {
                 // Previous button
