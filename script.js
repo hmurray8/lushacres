@@ -473,6 +473,7 @@ function initLightbox() {
     let dragMoved = false;
     let dragStart = { x: 0, y: 0 };
     let dragStartTranslate = { x: 0, y: 0 };
+    let downTarget = null;
 
     let pinching = false;
     let pinchStartDistance = 0;
@@ -705,8 +706,10 @@ function initLightbox() {
     });
 
     stage.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'touch') e.preventDefault();
         stage.setPointerCapture(e.pointerId);
         pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+        if (pointers.size === 1) downTarget = e.target;
         hideHint();
 
         if (pointers.size === 2) {
@@ -784,7 +787,10 @@ function initLightbox() {
             isDragging = false;
             stage.classList.remove('dragging');
 
-            if (wasSinglePointerTap && !dragMoved && e.pointerType === 'touch') {
+            if (wasSinglePointerTap && !dragMoved && downTarget === stage) {
+                // Tapped/clicked the empty area around the photo (not the photo itself)
+                close();
+            } else if (wasSinglePointerTap && !dragMoved && e.pointerType === 'touch') {
                 const now = Date.now();
                 const tapPos = { x: e.clientX, y: e.clientY };
                 if (now - lastTapTime < DOUBLE_TAP_WINDOW && distance(tapPos, lastTapPos) < DOUBLE_TAP_RADIUS) {
