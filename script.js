@@ -473,13 +473,13 @@ function initAcresGallery() {
             title: 'Acre 6 - Valley View',
             description: 'Lower hillside position with charming valley views and easy access',
             features: ['Valley Views', '1.2 Acres', 'Level Access', 'Close to Road'],
-            images: ['lot_6_1.jpg', 'lot_6_2.jpg']
+            images: ['lot_6_1.jpg', 'lot_6_2.jpg', 'lot_6_3.jpg', 'lot_6_4.jpg', 'lot_6_5.JPG', 'lot_6_6.JPG', 'lot_6_7.jpg']
         },
         7: {
             title: 'Acre 7 - Bottom Meadow',
             description: 'Peaceful bottom position with level ground and meadow-like setting',
             features: ['Level Ground', '1.35 Acres', 'Meadow Setting', 'Easy Development'],
-            images: ['lot_7_1.jpg', 'lot_7_2.jpg']
+            images: ['lot_7_1.jpg', 'lot_7_2.jpg', 'lot_7_3.jpg', 'lot_7_4.JPG', 'lot_7_5.JPG', 'lot_7_6.JPG']
         },
         8: {
             title: 'Acre 8 - Eastern Terrace',
@@ -503,19 +503,19 @@ function initAcresGallery() {
             title: 'Acre 11 - Northern Outlook',
             description: 'Northern facing lot with year-round sun and scenic outlook',
             features: ['North Facing', '1.35 Acres', 'All Day Sun', 'Scenic Outlook'],
-            images: ['lot_11_1.jpg', 'lot_11_2.jpg']
+            images: ['lot_11_1.jpg', 'lot_11_2.jpg', 'lot_11_3.jpg', 'lot_11_4.jpg', 'lot_11_5.jpg', 'lot_11_6.jpg']
         },
         12: {
             title: 'Acre 12 - Corner Haven',
             description: 'Corner position offering dual access and flexible building options',
             features: ['Corner Block', '1.45 Acres', 'Dual Access', 'Flexible Layout'],
-            images: ['lot_12_1.jpg', 'lot_12_2.jpg']
+            images: ['lot_12_1.jpg', 'lot_12_2.jpg', 'lot_12_3.jpg', 'lot_12_4.jpg', 'lot_12_5.jpg', 'lot_12_6.jpg', 'lot_12_7.jpg']
         },
         13: {
             title: 'Acre 13 - Corner Haven',
             description: 'Corner position offering dual access and flexible building options',
             features: ['Corner Block', '1.45 Acres', 'Dual Access', 'Flexible Layout'],
-            images: ['lot_13_1.jpg']//, 'lot_12_2.jpg']
+            images: ['lot_13_1.jpg', 'lot_13_2.jpg', 'lot_13_3.jpg', 'lot_13_4.jpg', 'lot_13_5.jpg', 'lot_13_6.jpg']
         }
     };
     
